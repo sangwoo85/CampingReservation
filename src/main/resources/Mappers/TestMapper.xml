@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+            "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="TestMapper">
+
+    <select id="testSelect" resultType="hashmap">
+        SELECT
+           CAMP_ID,
+           CAMP_NAME,
+           CAMP_URL,
+           USE_AT,
+           CAMP_STATE,
+           CAMP_CITY,
+           CAMP_DETAIL_ADDRESS,
+           CAMP_TOPIC_KEY,
+           TO_CHAR(REGISTRATION_DATE,'YYYYMMDD') AS REGISTRATION_DATE,
+           REGISTRATION_ID
+
+        FROM CAMP_LIST
+    </select>
+
+
+</mapper>

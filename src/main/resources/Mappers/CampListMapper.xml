@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="CampListMapper">
+
+    <select id="selectCampList" parameterType="hashmap" resultType="com.campingreservationbackend.vo.CampSiteVo">
+        SELECT
+           CAMP_ID,
+           CAMP_NAME,
+           CAMP_URL,
+           USE_AT,
+           CAMP_STATE,
+           CAMP_CITY,
+           CAMP_DETAIL_ADDRESS,
+           CAMP_TOPIC_KEY,
+           REGISTRATION_DATE,
+           REGISTRATION_ID
+        FROM CAMP_LIST
+        WHERE 1=1
+            AND USE_AT = #{USE_AT}
+
+    </select>
+
+    <insert id="insertReserveCampSite" parameterType="hashmap">
+        INSERT INTO RESERVATION_ADD_LIST(
+             RESERV_ADD_ID
+             ,CAMP_ID
+             ,RESERV_DATE
+             ,DELETE_AT
+            <if test="DEVICE_ID != NULL and DEVICE_ID != '' ">
+             ,DEVICE_ID
+            </if>
+            )
+        VALUES(
+          TO_CHAR(SYSDATE,'YYYYMMDD')||LPAD(RESERVATION_ADD_LIST_SEQ.NEXTVAL,4,0)
+          ,#{CAMP_ID}
+          ,#{RESERV_DATE}
+          ,'N'
+          <if test="DEVICE_ID != NULL and DEVICE_ID != '' ">
+          ,#{DEVICE_ID}
+          </if>
+        )
+    </insert>
+
+    <select id="selectExistCampSite" parameterType="String" resultType="String">
+        SELECT
+            CAMP_ID
+        FROM CAMP_LIST
+        WHERE 1=1
+          AND USE_AT = 'Y'
+          AND CAMP_ID = #{CAMP_ID}
+          AND ROWNUM = 1
+    </select>
+
+    <insert id="mergeInsertCamp" parameterType="hashmap">
+
+        MERGE INTO RESERVATION_BATCH_LIST B
+            USING DUAL
+            ON(B.CAMP_ID = #{CAMP_ID} AND B.RESERV_DATE = #{RESERV_DATE})
+            WHEN MATCHED THEN
+                UPDATE SET RESERV_COUNT = (RESERV_COUNT +1)
+            WHEN NOT MATCHED THEN
+                INSERT (RESERV_ID,RESERV_DATE,USE_AT,RESERV_COUNT,CAMP_ID)
+                VALUES( TO_CHAR(SYSDATE,'YYYYMMDD')||LPAD(RESERVATION_BATCH_LIST_SEQ.NEXTVAL,4,0)
+                      ,#{RESERV_DATE}
+                      ,#{USE_AT}
+                      ,#{RESERV_COUNT}
+                      ,#{CAMP_ID})
+
+    </insert>
+
+</mapper>

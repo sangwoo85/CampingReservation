@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="ReservationBatchMapper">
+
+<select id="selectReservationBatchList" parameterType="hashmap" resultType="com.campingreservationbackend.vo.ReservationCampSiteVo">
+    SELECT
+        A.RESERV_ID,
+        A.RESERV_DATE,
+        A.USE_AT,
+        A.RESERV_COUNT,
+        A.CAMP_ID,
+        B.CAMP_NAME,
+        B.CAMP_URL,
+        B.CAMP_STATE,
+        B.CAMP_CITY,
+        B.CAMP_DETAIL_ADDRESS,
+        B.CAMP_TOPIC_KEY,
+        B.REGISTRATION_DATE,
+        B.REGISTRATION_ID
+    FROM RESERVATION_BATCH_LIST A
+    LEFT OUTER JOIN CAMP_LIST B ON B.CAMP_ID = A.CAMP_ID
+    WHERE 1=1
+        AND A.USE_AT = 'Y'
+        AND A.RESERV_DATE > TO_CHAR(SYSDATE,'YYYYMMDD')
+</select>
+
+</mapper>
